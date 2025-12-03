@@ -76,4 +76,4 @@ Everything you need to build and ship agents:
 
 ## 🤝 Contributing
 
-Our SDKs, CLI, docs, and examples are open source. We welcome contributions -- see individual repos for guidelines.
+Our SDKs and examples are open source. Contributions welcome! See each repo for guidelines.
