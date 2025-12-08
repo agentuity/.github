@@ -2,19 +2,21 @@
 
 The full-stack platform for AI agents. Build with type-safe schemas, frontend hooks, and real-time routes. Ship agents as easily as web apps.
 
+> **Now in public preview** — Feedback welcome on [Discord](https://discord.gg/agentuity) and [GitHub Discussions](https://github.com/agentuity/sdk/discussions).
+
 From local government to indie developers, people are already building with us.
 
 Let's see this in action, with a basic agent that streams back responses:
 
 ```typescript
 import { createAgent } from '@agentuity/runtime';
+import { s } from '@agentuity/schema';
 import { streamText } from 'ai';
 import { openai } from '@ai-sdk/openai';
-import { z } from 'zod';
 
-const agent = createAgent({
+const agent = createAgent('chat', {
   schema: {
-    input: z.object({ message: z.string() }),
+    input: s.object({ message: s.string() }),
     stream: true,
   },
   handler: async (ctx, { message }) => {
@@ -39,7 +41,7 @@ Check out our [**sdk**](https://github.com/agentuity/sdk) (runtime, CLI, fronten
 
 ```bash
 # Install the CLI
-curl -fsS https://agentuity.sh | sh
+curl -fsS https://v1.agentuity.sh | sh
 
 # Create a new project
 agentuity create
@@ -77,7 +79,7 @@ Everything you need to build and ship full-stack AI agents:
 
 ## 📚 Resources
 
-- [Documentation](https://agentuity.dev): Guides, examples, and reference
+- [Documentation](https://preview.agentuity.dev/): Guides, examples, and reference
 - [Discord](https://discord.gg/agentuity): Join 200+ developers to chat, ask for help, and share what you're building
 
 ## 🤝 Contributing
