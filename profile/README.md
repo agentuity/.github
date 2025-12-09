@@ -6,32 +6,71 @@ The full-stack platform for AI agents. Build with type-safe schemas, frontend ho
 
 From local government to indie developers, people are already building with us.
 
-Let's see this in action, with a basic agent that streams back responses:
+Let's see this in action - a complete flow from agent to API to React frontend:
+
+**1. The Agent** (`src/agent/chat/agent.ts`)
 
 ```typescript
 import { createAgent } from '@agentuity/runtime';
 import { s } from '@agentuity/schema';
-import { streamText } from 'ai';
+import { generateText } from 'ai';
 import { openai } from '@ai-sdk/openai';
 
 const agent = createAgent('chat', {
+  description: 'A simple chat agent',
   schema: {
     input: s.object({ message: s.string() }),
-    stream: true,
+    output: s.object({ response: s.string() }),
   },
   handler: async (ctx, { message }) => {
-    const { textStream } = streamText({
+    const { text } = await generateText({
       model: openai('gpt-5-mini'),
       prompt: message,
     });
-    return textStream;
+    return { response: text };
   },
 });
 
 export default agent;
 ```
 
-It's that simple. Use `agentuity dev` to test locally, then `agentuity deploy` to production. 🚀
+**2. The API Route** (`src/api/index.ts`)
+
+```typescript
+import { createRouter } from '@agentuity/runtime';
+import chatAgent from '../agent/chat/agent';
+
+const router = createRouter();
+
+router.post('/chat', chatAgent.validator(), async (c) => {
+  const data = c.req.valid('json');
+  const result = await chatAgent.run(data);
+  return c.json(result);
+});
+
+export default router;
+```
+
+**3. The React Hook** (`src/web/components/Chat.tsx`)
+
+```tsx
+import { useAPI } from '@agentuity/react';
+
+export function Chat() {
+  const { invoke, data, isLoading } = useAPI('POST /api/chat');
+
+  return (
+    <div>
+      <button onClick={() => invoke({ message: 'Hello!' })}>
+        {isLoading ? 'Thinking...' : 'Send'}
+      </button>
+      {data && <p>{data.response}</p>}
+    </div>
+  );
+}
+```
+
+Use `agentuity dev` to test locally, then `agentuity deploy` to production. 🚀
 
 ## 📦 Key Repositories
 
