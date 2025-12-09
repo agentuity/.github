@@ -35,7 +35,7 @@ It's that simple. Use `agentuity dev` to test locally, then `agentuity deploy` t
 
 ## 📦 Key Repositories
 
-Check out our [**sdk**](https://github.com/agentuity/sdk) (runtime, CLI, frontend hooks, server utilities) and [**docs**](https://github.com/agentuity/docs).
+Check out our [**SDK**](https://github.com/agentuity/sdk) (runtime, CLI, frontend hooks, server utilities) and [**docs**](https://github.com/agentuity/docs).
 
 ## 🚀 Quick Start
 
@@ -60,7 +60,7 @@ Everything you need to build and ship full-stack AI agents:
 **Build**
 - **TypeScript-first**: Type-safe schemas, autocomplete everywhere, powered by Bun
 - **Frontend**: Deploy web apps alongside your agents with built-in hooks
-- **Framework-agnostic**: Use any AI library (e.g. Vercel AI SDK, LangChain, Mastra) or bring your own
+- **Framework-agnostic**: Use any AI library (e.g. Vercel AI SDK, Mastra) or bring your own
 - **Multi-agent**: Coordinate agents with type-safe calls between them
 - **Offline-ready**: Start building immediately, no account required
 - **Agent-friendly CLI**: `--json` output, `--explain` previews, `--dry-run` validation, schema discovery
