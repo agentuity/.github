@@ -2,7 +2,7 @@
 
 The full-stack platform for AI agents. Build with type-safe schemas, frontend hooks, and real-time routes. Ship agents as easily as web apps.
 
-> **Now in public preview** — Feedback welcome on [Discord](https://discord.gg/agentuity) and [GitHub Discussions](https://github.com/agentuity/sdk/discussions).
+> **[v1](https://github.com/agentuity/sdk) now in public preview** — Feedback welcome on [Discord](https://discord.gg/agentuity) and [GitHub Discussions](https://github.com/agentuity/sdk/discussions).
 
 From local government to indie developers, people are already building with us.
 
