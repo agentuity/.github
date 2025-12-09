@@ -38,13 +38,13 @@ export default agent;
 
 ```typescript
 import { createRouter } from '@agentuity/runtime';
-import chatAgent from '../agent/chat/agent';
+import chat from '@agent/chat';
 
 const router = createRouter();
 
-router.post('/chat', chatAgent.validator(), async (c) => {
+router.post('/chat', chat.validator(), async (c) => {
   const data = c.req.valid('json');
-  const result = await chatAgent.run(data);
+  const result = await chat.run(data);
   return c.json(result);
 });
 
