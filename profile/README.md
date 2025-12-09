@@ -31,7 +31,7 @@ const agent = createAgent('chat', {
 export default agent;
 ```
 
-It's that simple. Use `bun run dev` to test locally, then `bun run deploy` to production. 🚀
+It's that simple. Use `agentuity dev` to test locally, then `agentuity deploy` to production. 🚀
 
 ## 📦 Key Repositories
 
@@ -47,10 +47,10 @@ curl -fsS https://v1.agentuity.sh | sh
 agentuity create
 
 # Start developing
-cd my-project && bun run dev
+cd my-project && agentuity dev
 
 # Deploy to the cloud
-bun run deploy
+agentuity deploy
 ```
 
 ## What You Get
