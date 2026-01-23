@@ -74,13 +74,13 @@ Use `agentuity dev` to test locally, then `agentuity deploy` to production. 🚀
 
 ## 📦 Key Repositories
 
-Check out our [**SDK**](https://github.com/agentuity/sdk) (runtime, CLI, frontend hooks, server utilities) and [**docs**](https://github.com/agentuity/docs).
+Check out our [**SDK**](https://github.com/agentuity/sdk) (runtime, CLI, frontend hooks, server utilities) and [**docs**](https://agentuity.dev).
 
 ## 🚀 Quick Start
 
 ```bash
 # Install the CLI
-curl -fsS https://v1.agentuity.sh | sh
+curl -fsS https://agentuity.sh | sh
 
 # Create a new project
 agentuity create
@@ -118,7 +118,7 @@ Everything you need to build and ship full-stack AI agents:
 
 ## 📚 Resources
 
-- [Documentation](https://preview.agentuity.dev/): Guides, examples, and reference
+- [Documentation](https://agentuity.dev/): Guides, examples, and reference
 - [Discord](https://discord.gg/agentuity): Join 200+ developers to chat, ask for help, and share what you're building
 
 ## 🤝 Contributing
