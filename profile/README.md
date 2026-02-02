@@ -2,8 +2,6 @@
 
 The full-stack platform for AI agents. Build with type-safe schemas, frontend hooks, and real-time routes. Ship agents as easily as web apps.
 
-> **[v1](https://github.com/agentuity/sdk) now in public preview** — Feedback welcome on [Discord](https://discord.gg/agentuity) and [GitHub Discussions](https://github.com/agentuity/sdk/discussions).
-
 From local government to indie developers, people are already building with us.
 
 Let's see this in action - a complete flow from agent to API to React frontend:
@@ -120,6 +118,7 @@ Everything you need to build and ship full-stack AI agents:
 
 - [Documentation](https://agentuity.dev/): Guides, examples, and reference
 - [Discord](https://discord.gg/agentuity): Join 200+ developers to chat, ask for help, and share what you're building
+- [Web App](https://app.agentuity.com/): Manage Agentuity projects, services, billing, and more
 
 ## 🤝 Contributing
 
