@@ -1,31 +1,47 @@
 # Hey, we're Agentuity 👋
 
-The full-stack platform for AI agents. Build with type-safe schemas, frontend hooks, and real-time routes. Ship agents as easily as web apps.
+We're the full-stack, agent-native platform for AI agents. Every agent gets [runtime services](https://agentuity.dev/services) (e.g. storage, sandboxes, observability) built in, not bolted on.
 
 From local government to indie developers, people are already building with us.
 
-Let's see this in action - a complete flow from agent to API to React frontend:
+## 🚀 Quick Start
 
-**1. The Agent** (`src/agent/chat/agent.ts`)
+```bash
+curl -fsSL https://agentuity.sh | sh
+agentuity create --name my-agent-app # full-stack agent + typed React frontend
+cd my-agent-app
+agentuity dev # Vite HMR, also available as bun run dev
+agentuity deploy # ship it to the cloud, also available as bun run deploy
+```
+
+## A Full-Stack Agent
+
+A typed agent, an API route, and a React client, with [end-to-end type safety](https://agentuity.dev/agents/schema-libraries) flowing from handler to route client.
+
+**1. The Agent** (`src/agent/translate/index.ts`)
 
 ```typescript
 import { createAgent } from '@agentuity/runtime';
-import { s } from '@agentuity/schema';
-import { generateText } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { s } from '@agentuity/schema'; // our built-in, lightweight schema library
+import OpenAI from 'openai';
 
-const agent = createAgent('chat', {
-  description: 'A simple chat agent',
+const agent = createAgent('translate', {
+  description: 'Translates text between languages',
   schema: {
-    input: s.object({ message: s.string() }),
-    output: s.object({ response: s.string() }),
+    input: s.object({
+      text: s.string(),
+      toLanguage: s.enum(['Spanish', 'French', 'German']),
+    }),
+    output: s.object({ translation: s.string() }),
   },
-  handler: async (ctx, { message }) => {
-    const { text } = await generateText({
-      model: openai('gpt-5-mini'),
-      prompt: message,
+  setup: async () => ({ client: new OpenAI() }), // lazy init so discovery works without the API key
+  handler: async (ctx, { text, toLanguage }) => {
+    // AI Gateway handles routing, observability, and billing
+    const completion = await ctx.config.client.chat.completions.create({
+      model: 'gpt-5.4-nano',
+      messages: [{ role: 'user', content: `Translate to ${toLanguage}:\n\n${text}` }],
     });
-    return { response: text };
+    return { translation: completion.choices[0]?.message?.content ?? '' };
   },
 });
 
@@ -35,59 +51,47 @@ export default agent;
 **2. The API Route** (`src/api/index.ts`)
 
 ```typescript
-import { createRouter } from '@agentuity/runtime';
-import chat from '@agent/chat';
+import { Hono } from 'hono'; // Hono is baked in: bring middleware, validators, streaming
+import type { Env } from '@agentuity/runtime';
+import translate from '../agent/translate';
 
-const router = createRouter();
-
-router.post('/chat', chat.validator(), async (c) => {
-  const data = c.req.valid('json');
-  const result = await chat.run(data);
-  return c.json(result);
+// validator() enforces the agent's input schema at the route boundary
+const api = new Hono<Env>().post('/translate', translate.validator(), async (c) => {
+  return c.json(await translate.run(c.req.valid('json')));
 });
 
-export default router;
+export type ApiRouter = typeof api;
+export default api;
 ```
 
-**3. The React Hook** (`src/web/components/Chat.tsx`)
+**3. The React Client** (`src/web/App.tsx`)
 
 ```tsx
-import { useAPI } from '@agentuity/react';
+import { hc } from 'hono/client';
+import type { ApiRouter } from '../api';
+import { useState } from 'react';
 
-export function Chat() {
-  const { invoke, data, isLoading } = useAPI('POST /api/chat');
+const client = hc<ApiRouter>('/api'); // routes, bodies, and responses stay in sync
+
+export function App() {
+  const [result, setResult] = useState<string>();
+
+  const translate = async () => {
+    // If the route name or input schema changes, TypeScript catches this call
+    const res = await client.translate.$post({
+      json: { text: 'Hello, world!', toLanguage: 'Spanish' },
+    });
+    const { translation } = await res.json();
+    setResult(translation);
+  };
 
   return (
-    <div>
-      <button onClick={() => invoke({ message: 'Hello!' })}>
-        {isLoading ? 'Thinking...' : 'Send'}
-      </button>
-      {data && <p>{data.response}</p>}
-    </div>
+    <>
+      <button type="button" onClick={translate}>Translate</button>
+      {result && <p>{result}</p>}
+    </>
   );
 }
-```
-
-Use `agentuity dev` to test locally, then `agentuity deploy` to production. 🚀
-
-## 📦 Key Repositories
-
-Check out our [**SDK**](https://github.com/agentuity/sdk) (runtime, CLI, frontend hooks, server utilities) and [**docs**](https://agentuity.dev).
-
-## 🚀 Quick Start
-
-```bash
-# Install the CLI
-curl -fsS https://agentuity.sh | sh
-
-# Create a new project
-agentuity create
-
-# Start developing
-cd my-project && agentuity dev
-
-# Deploy to the cloud
-agentuity deploy
 ```
 
 ## What You Get
@@ -95,31 +99,36 @@ agentuity deploy
 Everything you need to build and ship full-stack AI agents:
 
 **Build**
-- **TypeScript-first**: Type-safe schemas, autocomplete everywhere, powered by Bun
-- **Frontend**: Deploy web apps alongside your agents with built-in hooks
-- **Framework-agnostic**: Use any AI library (e.g. Vercel AI SDK, Mastra) or bring your own
-- **Multi-agent**: Coordinate agents with type-safe calls between them
-- **Offline-ready**: Start building immediately, no account required
-- **Agent-friendly CLI**: `--json` output, `--explain` previews, `--dry-run` validation, schema discovery
+
+- **TypeScript-first**: type-safe schemas, autocomplete everywhere, powered by Bun
+- **Infrastructure as code**: HTTP, cron, email/webhooks, WebSocket, SSE, WebRTC. Rollback-friendly deploys.
+- **[Frontend](https://agentuity.com/product/react-frontend)**: deploy React apps alongside your agents with a typed Hono `hc()` client
+- **Bring your own framework**: use integrations like [OpenAI Agents SDK, Mastra, and LangChain](https://github.com/agentuity/examples/tree/main/integrations), or drop the SDK into your existing app
+- **Multi-agent**: coordinate agents with type-safe calls and shared session context
+- **Agent-friendly CLI**: `--json` output, `--explain` previews, `--dry-run` validation, schema and capability discovery
 
 **Connect**
-- **AI Gateway**: Access all major LLM providers (e.g. OpenAI, Anthropic, Google) with just one API key
-- **Infrastructure as code**: HTTP, cron, email, SMS, WebSocket, and SSE. Rollback-friendly deployments.
-- **Storage**: Key-value, vector, object, durable streams. BYO supported.
-- **Custom domains**: Automated SSL certificates and DNS management
-- **Deploy anywhere**: Public cloud, private cloud, on-prem, or edge
+
+- **[AI Gateway](https://agentuity.com/product/ai-gateway)**: one key for OpenAI, Anthropic, Google, Groq, and more
+- **Storage & services**: key-value, vector, object, Postgres, durable streams, queues
+- **[Sandboxes](https://agentuity.com/product/sandboxes)**: isolated language runtimes (e.g. Bun, Python), browser automation (e.g. Playwright, Agent Browser), and coding agents (e.g. Codex, Claude Code)
+- **Custom domains**: define domains in config, then deploy with automatic SSL and DNS validation
+- **Deploy anywhere**: our cloud, your VPC, on-prem, or edge via [our Gravity Network](https://agentuity.dev/reference/gravity-network)
 
 **Monitor**
-- **Observability**: OpenTelemetry tracing, structured logging, real-time analytics
-- **Evaluations**: Automated quality checks after each agent run
+
+- **[Observability](https://agentuity.com/product/observability)**: OpenTelemetry traces, structured logs, real-time analytics
+- **Sessions & threads**: requests grouped for conversation-level visibility
 - **Container access**: SSH and SCP into running deployments
 
-## 📚 Resources
+## 📚 Repos & Resources
 
-- [Documentation](https://agentuity.dev/): Guides, examples, and reference
-- [Discord](https://discord.gg/agentuity): Join 200+ developers to chat, ask for help, and share what you're building
-- [Web App](https://app.agentuity.com/): Manage Agentuity projects, services, billing, and more
+- [SDK](https://github.com/agentuity/sdk): runtime, CLI, schema, services, frontend utilities
+- [Examples](https://github.com/agentuity/examples): training, integrations, features
+- [Docs](https://agentuity.dev): guides and reference
+- [Discord](https://discord.gg/agentuity): join 250+ developers to chat with us and other builders, or ask for help
+- [Web App](https://app.agentuity.com): manage projects, services, billing, and more
 
 ## 🤝 Contributing
 
-Our SDK is open source. Contributions welcome! See the repo for guidelines.
+Our SDK is open source, so contributions are welcome! See the repo for guidelines.
