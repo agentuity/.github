@@ -7,11 +7,13 @@ From [local government](https://agentuity.com/enterprise) to indie developers, p
 ## 🚀 Quick Start
 
 ```bash
-curl -fsSL https://agentuity.sh | sh
-agentuity create --name my-app    # pick a framework: Next.js, Nuxt, SvelteKit, Astro, or Hono
+npm create agentuity -- --name my-app --framework nextjs   # or nuxt, sveltekit, astro, hono
 cd my-app
-agentuity dev                     # local dev; add --public for a shareable HTTPS URL
-agentuity deploy                  # buildpack deploy to the cloud, no extra config needed!
+npx agentuity dev    # local dev; add --public for a shareable HTTPS URL
+npm run deploy       # buildpack deploy to the cloud
+
+# Works with npm, pnpm, yarn, or bun.
+# Prefer a global CLI? curl -fsSL https://agentuity.sh | sh
 ```
 
 ## An agent, in any framework
