@@ -12,7 +12,7 @@ cd my-app
 npx agentuity dev    # local dev; add --public for a shareable HTTPS URL
 npm run deploy       # buildpack deploy to the cloud
 
-# Works with npm, pnpm, yarn, or bun.
+# Works with npm, pnpm, yarn, or bun!
 # Prefer a global CLI? curl -fsSL https://agentuity.sh | sh
 ```
 
